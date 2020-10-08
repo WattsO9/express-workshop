@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const {pokemon} = require('./pokedex.json')
 
 /*
 VERBOS HTTP: Formas de hacer peticiones
@@ -10,11 +11,41 @@ PUT: Actualizar todos los datos de un recurso.
 DELETE: Eliminar un recurso (un registro en la BD).
 */
 
-app.get("/", (req, rest, next) => {
+app.get("/", (req, res, next) => {
     res.status(200);
-    res.send("Bienvenido");
+    res.send("Bienvenido al Pokedex");
 });
 
-app.listen(3000, () => {
+app.get("/pokemon/all", (req, res, next) => {
+    res.status(200);
+    res.send(pokemon);
+
+});
+
+app.get('/pokemon/:id([0-9]{1,3})', (req, res, next) =>{
+    const id = req.params.id - 1;
+    if(id >= 0 && id <= 151){
+        res.status(200);
+        res.send(pokemon[req.params.id - 1]);
+    }
+    else{
+        res.status(404);
+        res.send("Pokémon no encontrado");
+    }
+});
+
+app.get('/pokemon/:name', (req, res, next) => {
+    const name = req.params.name;
+    for(i = 0; i<pokemon.length; i++){
+        if(name == pokemon[i].name){
+            res.status(200);
+            res.send(pokemon[i]);
+        }
+    }
+    res.status(404);
+    res.send("Pokémon no encontrado");
+});
+
+app.listen(process.env.PORT || 3000, () => {
     console.log("Server is running...");
 });
