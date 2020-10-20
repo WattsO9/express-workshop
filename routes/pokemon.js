@@ -8,34 +8,31 @@ pokemon.post("/", (req, res, next) => {
 
 pokemon.get("/", async (req, res, next) => {
     const pkmn = await db.query("SELECT * FROM pokemon");
-    return res.status(200).json(pkmn);
+    return res.status(200).json({code: 1, message: pkmn});
 
 });
 
 pokemon.get('/:id([0-9]{1,3})', async (req, res, next) =>{
     const id = req.params.id;
-        let sentence = "SELECT * FROM pokemon WHERE pok_id="+id;
-        const pkmn = await db.query(sentence);
-        if (pkmn.length > 0){
-            return res.status(200).send(pkmn);
+        if (id >= 1 && id <= 722){
+            const pkmn = await db.query("SELECT * FROM pokemon WHERE pok_id="+id+";");
+            return res.status(200).json({code: 1, message:pkmn});
         }
-        else{
-            return res.status(404).send("Pokémon no encontrado");
-        }
+        return res.status(404).send({code: 404, message: "Pokémon no encontrado"});
 });
 
 pokemon.get('/:name([A-Za-z]+)', async (req, res, next) => {
     let name = req.params.name;
     name = name.toLowerCase();
-    let sentence = "SELECT * FROM pokemon WHERE pok_name="+"'"+name+"'";
 
+    let sentence = "SELECT * FROM pokemon WHERE pok_name="+"'"+name+"'";
     const pkmn = await db.query(sentence);
     
     if (pkmn.length > 0){
-        return res.status(200).send(pkmn);
+        return res.status(200).json({code: 1, message:pkmn});
     }
     else{
-        return res.status(404).send("Pokémon no encontrado");
+        return res.status(404).send({code: 404, message: "Pokémon no encontrado"});
     }
 
 });
