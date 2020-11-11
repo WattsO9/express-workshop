@@ -1,3 +1,6 @@
 node_modules
 pokemon.sql
 pokemon.sql.zip
+
+#Ignore UI
+Pokedex/
